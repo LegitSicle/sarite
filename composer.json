@@ -1,0 +1,15 @@
+{
+    "name": "sicle/sarite",
+    "description": "Custom Lightweight PHP Framework used for academic projects.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "sarite\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.3.6",
+        "vlucas/phpdotenv": "^5.7"
+    }
+}
