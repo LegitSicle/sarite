@@ -3,13 +3,13 @@
     "description": "Custom Lightweight PHP Framework used for academic projects.",
     "type": "library",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "sarite\\": "src/"
-        }
-    },
+    "minimum-stability": "dev",
     "require": {
-        "php": ">=8.3.6",
+        "php": ">=8.2.12",
         "vlucas/phpdotenv": "^5.7"
-    }
+    },
+    "bin": [
+        "bin/createEnv",
+        "bin/migrate"
+    ]
 }

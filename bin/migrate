@@ -1,12 +1,11 @@
+#!/usr/bin/env php
 <?php
-namespace sarite;
-
-define("ROOT", dirname(__DIR__));
-require_once __DIR__ . "/bootstrap.php";
+$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? getcwd() . "/vendor/autoload.php";
+require_once $autoloadPath;
 use sarite\data\Database;
-use function in_array;
 
 $dbConfig = [
+    "migrations" => $_ENV["DB_MIGRATIONS"],
     "host" => $_ENV["DB_HOST"],
     "port" => $_ENV["DB_PORT"],
     "name" => $_ENV["DB_NAME"],
@@ -16,5 +15,5 @@ $dbConfig = [
 if (in_array("--init_db", $argv, true)) {
     Database::initialize($dbConfig);
 }
-$database = new Database(ROOT, $dbConfig);
+$database = new Database($dbConfig);
 $database->migrate();

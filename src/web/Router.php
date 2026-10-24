@@ -1,5 +1,6 @@
 <?php
 namespace sarite\web;
+use Exception;
 use function call_user_func;
 
 class Router {
@@ -21,10 +22,11 @@ class Router {
         };
     }
 
-    public function resolve(Request $request): ?Response {
+    public function resolve(Request $request): Response {
         $path = $request->path();
         $method = $request->method();
-        $route = $this->routes[$method][$path];
-        return call_user_func($route($request));
+        $route = $this->routes[$method][$path] ?? null;
+        if (empty($route)) throw new Exception("Route Not Found!", 404);
+        return call_user_func($route, $request);
     }
 }

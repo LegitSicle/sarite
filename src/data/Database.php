@@ -1,6 +1,5 @@
 <?php
 namespace sarite\data;
-
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -8,14 +7,15 @@ use function sprintf;
 
 class Database {
     public readonly PDO $pdo;
+    private string $migrationsDir;
 
     public function __construct(
-        private string $root,
         array $config
     ) {
         $dsn = "mysql:host={$config["host"]};port={$config["port"]};dbname={$config["name"]}";
         $user = $config["user"] ?? "";
         $password = $config["password"] ?? "";
+        $this->migrationsDir = getcwd() . $config["migrations"];
         $this->pdo = new PDO($dsn, $user, $password);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
@@ -54,12 +54,12 @@ class Database {
         $newMigrations = [];
         $this->createMigrations();
         $applied = $this->getApplied();
-        $files = scandir($this->root . DIRECTORY_SEPARATOR . "migrations");
+        $files = scandir($this->migrationsDir);
         $toApply = array_diff($files, $applied);
         echo "[INFO] Committing migrations...\n";
         foreach ($toApply as $migration) {
             if ($migration === "." || $migration === "..") continue;
-            $sql = file_get_contents($this->root . DIRECTORY_SEPARATOR . "migrations" . DIRECTORY_SEPARATOR . $migration);
+            $sql = file_get_contents($this->migrationsDir . DIRECTORY_SEPARATOR . $migration);
             $this->log("Applying $migration");
             $this->pdo->exec($sql);
             $newMigrations[] = $migration;

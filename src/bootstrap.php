@@ -1,9 +1,10 @@
 <?php
 namespace sarite;
-
-require_once dirname(__DIR__) . "/vendor/autoload.php";
 use Dotenv\Dotenv;
-Dotenv::createImmutable(dirname(__DIR__))->load();
+use Composer\InstalledVersions;
+
+$projectRoot = InstalledVersions::getRootPackage()['install_path'];
+Dotenv::createImmutable($projectRoot)->load();
 
 function safe_encode(mixed $value): string {
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_SUBSTITUTE);
