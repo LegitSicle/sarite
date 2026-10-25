@@ -13,6 +13,16 @@ class Response {
     private string $content = "";
 
     /**
+     * Shorthand to set a location header.
+     * @param string $URI Route to be redirected to
+     * @return Response
+     */
+    public static function redirectOnly(string $URI): self {
+        return (new Response())
+            ->headers("Location", dirname(dirname($_SERVER['SCRIPT_NAME'])) . $URI);
+    }
+
+    /**
      * Class default is `200`. This is will be the value used for `http_response_code()`.
      * @param int $value The new statusCode
      * @return Response
@@ -40,17 +50,6 @@ class Response {
      */
     public function content(string $value): self {
         $this->content = $value;
-        return $this;
-    }
-
-    /**
-     * Shorthand to set a location header.
-     * @param string $URI Route to be redirected to
-     * @return Response
-     */
-    public function redirect(string $URI): self {
-        $basePath = dirname(dirname($_SERVER['SCRIPT_NAME']));
-        $this->headers["Location"] = "{$basePath}{$URI}";
         return $this;
     }
 

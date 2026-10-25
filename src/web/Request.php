@@ -12,6 +12,9 @@ class Request {
      * @return string The path route.
      */
     public function path(): string {
+        $errorStatus = $this->apacheErrorStatus();
+        if ($errorStatus !== null) return "/error/{$errorStatus}";
+
         $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) ?? '/';
         $basePath = dirname(dirname($_SERVER['SCRIPT_NAME']));
         if ($basePath && str_starts_with($uri, $basePath)) {
@@ -30,6 +33,18 @@ class Request {
 
     public function isPost(): bool {
         return $this->method() === "post";
+    }
+
+    public function apacheErrorStatus(): ?int {
+        foreach ($_SERVER as $key => $value) {
+            if (preg_match('/^(REDIRECT_)+STATUS$/', $key)) {
+                $statusCode = (int) $value;
+                if ($statusCode >= 400 && $statusCode < 600) {
+                    return $statusCode;
+                }
+            }
+        }
+        return null;
     }
 
     /**
