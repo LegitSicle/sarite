@@ -3,6 +3,7 @@ namespace sarite\data;
 
 use Override;
 use PDOException;
+use ReflectionClass;
 // ISSUE: RULES NOT ENFORCED FOR RULE_MIN;
 /**
  * This extends the `Model` class and allows data to be inserted into the MySQL database.
@@ -17,13 +18,16 @@ abstract class DatabaseModel extends Model {
      */
     protected const RULE_UNIQUE = "unique";
 
-    abstract protected static function tableName(): string;
+    protected static function table(): string {
+        return (new ReflectionClass(static::class))->getShortName();
+    }
+    
     abstract protected function attributes(): array;
     abstract public function primaryKey(): string;
 
     public function attemptSave(): bool {
         try {
-            $tableName = $this->tableName();
+            $tableName = $this->table();
             $attributes = $this->attributes();
             $columnValues = [];
             foreach ($attributes as $attribute) {
@@ -46,7 +50,7 @@ abstract class DatabaseModel extends Model {
         $this->parseSelf(function (string $ruleName, string $attribute, mixed $param, mixed $value) {
             $this->defaultChecker($ruleName, $attribute, $param, $value);
             if ($ruleName === self::RULE_UNIQUE) {
-                $tableName = $this->tableName();
+                $tableName = $this->table();
                 $statement = static::$database->selectOne($tableName, [$attribute => $value]);
                 if ($statement->fetchObject()) {
                     $this->addErrorForRule($attribute, self::RULE_UNIQUE);
@@ -64,7 +68,7 @@ abstract class DatabaseModel extends Model {
     }
 
     public static function findOne(array $where): static|bool {
-        $tableName = static::tableName();
+        $tableName = static::table();
         $statement = static::$database->selectAll($tableName, $where);
         return $statement->fetchObject(static::class);
     }

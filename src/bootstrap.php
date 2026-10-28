@@ -11,5 +11,7 @@ function safe_encode(mixed $value): string {
 }
 
 function view_name(string $path): string {
-    return ltrim($path, '/');
+    $file = ltrim($path, '/');
+    $file = str_replace("/", "_", $file);
+    return $file;
 }

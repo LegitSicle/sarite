@@ -98,8 +98,8 @@ abstract class Model {
                     $ruleName = $ruleValue;
                     $param = null;
                 }
+                call_user_func($checker, $ruleName, $attribute, $param, $value);
             }
-            call_user_func($checker, $ruleName, $attribute, $param, $value);
         }
     }
 

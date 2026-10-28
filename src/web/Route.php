@@ -3,10 +3,12 @@ namespace sarite\web;
 use sarite\controller\Middleware;
 use sarite\controller\Controller;
 use Exception;
+use sarite\controller\RedirectController;
 
 class Route {
     public readonly string $method;
     public readonly string $url;
+    public readonly string $destination;
     public readonly string $controllerClass;
     public readonly array $data;
     /**
@@ -27,6 +29,14 @@ class Route {
         $this->method = "post";
         $this->url = $url;
         $this->controllerClass = $controllerClass;
+        return $this;
+    }
+
+    public function redirect(string $url, string $destination): self {
+        $this->method = "get";
+        $this->url = $url;
+        $this->controllerClass = RedirectController::class;
+        $this->data = ["destination" => $destination];
         return $this;
     }
 
